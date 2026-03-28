@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de estudiantes</title>
+  <style>
+    .destacado {
+      background-color: #d4edda;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Notas de estudiantes</h1>
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Nota</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each students}}
+        <tr {{#if (gt this.grade 15)}}class="destacado"{{/if}}>
+          <td>{{this.name}}</td>
+          <td>{{this.grade}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</body>
+</html>
