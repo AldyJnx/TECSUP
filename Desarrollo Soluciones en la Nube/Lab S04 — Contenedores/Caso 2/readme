@@ -1,0 +1,109 @@
+# 🗳️ Consulta Masiva ONPE 2026 — Caso 2
+
+Aplicación web que procesa un Excel con DNIs y consulta automáticamente el portal de la ONPE usando **Selenium + Chromium headless**, completando los resultados en el mismo Excel.
+
+---
+
+## 📁 Estructura
+
+```
+caso2/
+├── app.py                  # Aplicación Flask + Selenium
+├── consulta_onpe.xlsx      # Plantilla Excel de ejemplo
+├── requirements.txt        # Flask, Selenium, openpyxl
+├── Dockerfile              # Imagen base
+├── Dockerfile.optimizado   # Con usuario no-root y healthcheck
+├── Dockerfile.multistage   # Build en 2 etapas
+└── .dockerignore
+```
+
+---
+
+## 🚀 Pasos de instalación y ejecución
+
+### Opción A: Dockerfile estándar
+
+```bash
+docker build -t onpe-masiva:v1.0 .
+docker run -d -p 5000:5000 --name onpe onpe-masiva:v1.0
+# Abrir: http://localhost:5000
+```
+
+### Opción B: Dockerfile optimizado
+
+```bash
+docker build -f Dockerfile.optimizado -t onpe-masiva:v1.1 .
+docker run -d -p 5000:5000 --name onpe-opt onpe-masiva:v1.1
+```
+
+### Opción C: Multi-stage build
+
+```bash
+docker build -f Dockerfile.multistage -t onpe-masiva:v1.2 .
+docker run -d -p 5000:5000 --name onpe-ms onpe-masiva:v1.2
+```
+
+---
+
+## 🔍 Cómo usar
+
+1. Abre `http://localhost:5000`
+2. Descarga la plantilla Excel y rellena los DNIs
+3. Sube el Excel a la app
+4. Espera — el sistema consulta cada DNI en el portal ONPE (~15s por DNI)
+5. Descarga el Excel con los resultados:
+
+| Columna | Resultado |
+|---|---|
+| ¿Es Miembro de Mesa? | **SÍ** (verde) / **NO** (rojo) |
+| Cargo | Presidente / Secretario / Tercer Miembro |
+| Región | Departamento asignado |
+| Provincia | Provincia asignada |
+| Distrito | Distrito asignado |
+| Mesa N° | Número de mesa |
+| Dirección del Local | Dirección completa del local de votación |
+
+---
+
+## ⚙️ Flujo interno
+
+```
+Excel con DNIs
+     │
+     ▼
+Flask recibe el archivo
+     │
+     ▼
+Hilo Python (por cada DNI):
+  Selenium abre Chromium headless
+  → Navega a consultaelectoral.onpe.gob.pe
+  → Ingresa el DNI
+  → Extrae el resultado
+     │
+     ▼
+openpyxl escribe resultado en Excel
+(color verde=SÍ, rojo=NO)
+     │
+     ▼
+Excel descargable con resultados
+```
+
+---
+
+## 📊 Comparación de imágenes
+
+| Imagen           | Tamaño aprox. |
+|------------------|---------------|
+| onpe-masiva:v1.0 | ~600 MB       |
+| onpe-masiva:v1.1 | ~580 MB       |
+| onpe-masiva:v1.2 | ~560 MB       |
+
+> Chromium desde apt pesa ~400 MB. Es necesario para ejecutar el portal ONPE (SPA en JavaScript).
+
+---
+
+## 🔧 Tecnologías
+
+- **Flask** 3.0.0
+- **Selenium** 4.18.1 + **Chromium** headless
+- **openpyxl** 3.1.2
