@@ -1,0 +1,184 @@
+/* Estilos personalizados para complementar Materialize CSS */
+
+/* General */
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background-color: #fafafa;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* Navegación minimalista */
+nav {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+nav .brand-logo {
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+nav ul a {
+  font-size: 0.95rem;
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+nav ul a:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 80px 20px;
+  margin-bottom: 40px;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  font-weight: 300;
+  margin-bottom: 15px;
+  letter-spacing: -1px;
+}
+
+.hero-section .flow-text {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 0;
+}
+
+/* Cards minimalistas */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.card.hoverable:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.card .card-title {
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+.card-panel {
+  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+
+/* Botones minimalistas */
+.btn, .btn-large {
+  border-radius: 4px;
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.btn:hover, .btn-large:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Formularios */
+.input-field input:focus,
+.input-field textarea:focus {
+  border-color: #757575 !important;
+  box-shadow: 0 1px 0 0 #757575 !important;
+}
+
+.input-field label {
+  color: #9e9e9e;
+}
+
+.input-field label.active {
+  color: #757575;
+}
+
+.input-field .prefix.active {
+  color: #757575;
+}
+
+/* Collections */
+.collection {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.collection .collection-item {
+  border-bottom: 1px solid #f5f5f5;
+  transition: background-color 0.2s ease;
+}
+
+.collection .collection-item:hover {
+  background-color: #fafafa;
+}
+
+.collection .collection-item:last-child {
+  border-bottom: none;
+}
+
+/* Footer minimalista */
+footer.page-footer {
+  margin-top: 60px;
+  padding-top: 0;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.08);
+}
+
+footer.page-footer .footer-copyright {
+  padding: 20px 0;
+  font-size: 0.9rem;
+  font-weight: 300;
+}
+
+/* Iconos */
+.material-icons.large {
+  font-size: 4rem;
+  margin-bottom: 15px;
+}
+
+/* Espaciado y secciones */
+.section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Mejoras responsive */
+@media only screen and (max-width: 600px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-section {
+    padding: 50px 20px;
+  }
+
+  nav .brand-logo {
+    font-size: 1.3rem;
+  }
+}
+
+/* Animaciones suaves */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+a {
+  transition: all 0.2s ease;
+}
+
+/* Badge personalizado */
+.badge {
+  border-radius: 4px;
+  font-weight: 400;
+}

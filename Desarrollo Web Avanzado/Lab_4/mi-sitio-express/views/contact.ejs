@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="white">
+    <div class="nav-wrapper container">
+        <a href="/" class="brand-logo grey-text text-darken-3">Mi Sitio</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/" class="grey-text text-darken-2">Inicio</a></li>
+            <li><a href="/about" class="grey-text text-darken-2">Acerca de</a></li>
+            <li><a href="/contact" class="grey-text text-darken-2">Contacto</a></li>
+            <li><a href="/games" class="grey-text text-darken-2">Videojuegos</a></li>
+            <li><a href="/admin" class="grey-text text-darken-2">Admin</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Header Section -->
+<div class="hero-section grey lighten-4">
+    <div class="container center-align">
+        <h1 class="grey-text text-darken-3">Contacto</h1>
+        <p class="flow-text grey-text text-darken-1">Estamos aquí para ayudarte</p>
+    </div>
+</div>
+
+<!-- Form Section -->
+<div class="container section">
+    <div class="row">
+        <div class="col s12 m8 offset-m2 l6 offset-l3">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title grey-text text-darken-3 center-align">
+                        <i class="material-icons left">mail_outline</i>
+                        Envíanos un mensaje
+                    </span>
+
+                    <form action="/contact" method="POST">
+                        <div class="input-field">
+                            <i class="material-icons prefix grey-text text-darken-2">account_circle</i>
+                            <input id="nombre" type="text" name="nombre" required>
+                            <label for="nombre">Nombre completo</label>
+                        </div>
+
+                        <div class="input-field">
+                            <i class="material-icons prefix grey-text text-darken-2">email</i>
+                            <input id="email" type="email" name="email" required>
+                            <label for="email">Correo electrónico</label>
+                        </div>
+
+                        <div class="input-field">
+                            <i class="material-icons prefix grey-text text-darken-2">message</i>
+                            <textarea id="mensaje" class="materialize-textarea" name="mensaje" required></textarea>
+                            <label for="mensaje">Tu mensaje</label>
+                        </div>
+
+                        <div class="center-align">
+                            <button type="submit" class="btn-large grey darken-2 waves-effect waves-light">
+                                Enviar mensaje
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info adicional -->
+            <div class="card-panel grey lighten-5">
+                <p class="grey-text text-darken-1 center-align">
+                    <i class="material-icons tiny">info</i>
+                    Responderemos tu mensaje lo antes posible
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="page-footer white">
+    <div class="footer-copyright">
+        <div class="container center-align grey-text text-darken-2">
+            2026 Mi Sitio Express
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

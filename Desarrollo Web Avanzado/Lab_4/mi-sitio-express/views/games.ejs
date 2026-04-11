@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videojuegos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        /* Estilo Gamer para la página de videojuegos */
+        body.games-page {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-attachment: fixed;
+        }
+
+        .games-page nav {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .games-hero {
+            background: linear-gradient(135deg, #e94560 0%, #533483 100%);
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .games-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+            pointer-events: none;
+        }
+
+        .games-hero h1 {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.8), 0 0 40px rgba(83, 52, 131, 0.6);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .games-hero .flow-text {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Stats Cards Gamer */
+        .stat-card-gamer {
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card-gamer::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00f5ff, #e94560, #533483, #00f5ff);
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card-gamer:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card-gamer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+
+        .stat-card-gamer i {
+            color: #00f5ff;
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+        }
+
+        .stat-card-gamer h5 {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .stat-card-gamer p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Form Card Gamer */
+        .form-card-gamer {
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(0, 245, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 245, 255, 0.2);
+        }
+
+        .form-card-gamer .card-title {
+            color: #00f5ff !important;
+            text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+            font-weight: 600;
+        }
+
+        .form-card-gamer input,
+        .form-card-gamer textarea {
+            color: #fff !important;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.3) !important;
+        }
+
+        .form-card-gamer input:focus,
+        .form-card-gamer textarea:focus {
+            border-bottom: 2px solid #00f5ff !important;
+            box-shadow: 0 1px 0 0 #00f5ff !important;
+        }
+
+        .form-card-gamer label {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .form-card-gamer label.active {
+            color: #00f5ff !important;
+        }
+
+        .form-card-gamer .prefix {
+            color: rgba(0, 245, 255, 0.7) !important;
+        }
+
+        .form-card-gamer .prefix.active {
+            color: #00f5ff !important;
+        }
+
+        .form-card-gamer .helper-text {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Botón Gamer */
+        .btn-gamer {
+            background: linear-gradient(135deg, #e94560 0%, #533483 100%) !important;
+            border: none;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .btn-gamer:hover {
+            box-shadow: 0 6px 25px rgba(233, 69, 96, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Game Cards */
+        .game-card {
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid rgba(0, 245, 255, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover {
+            border-color: rgba(0, 245, 255, 0.6);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 245, 255, 0.4);
+        }
+
+        .game-card .card-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card .card-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .game-card:hover .card-image::after {
+            left: 100%;
+        }
+
+        .game-card .card-title {
+            background: linear-gradient(to bottom, rgba(26, 26, 46, 0.95), rgba(26, 26, 46, 0.7)) !important;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .game-card .card-content {
+            background: rgba(26, 26, 46, 0.9);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .game-card .card-content strong {
+            color: #00f5ff;
+        }
+
+        .game-rating {
+            background: linear-gradient(135deg, #e94560, #533483);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.6);
+        }
+
+        .game-card .card-action {
+            background: rgba(15, 52, 96, 0.5);
+            border-top: 1px solid rgba(0, 245, 255, 0.2);
+        }
+
+        .btn-delete-gamer {
+            background: linear-gradient(135deg, #ff0844, #8b0000) !important;
+            box-shadow: 0 4px 15px rgba(255, 8, 68, 0.4);
+        }
+
+        .btn-delete-gamer:hover {
+            box-shadow: 0 6px 25px rgba(255, 8, 68, 0.6);
+        }
+
+        /* Section Title */
+        .section-title-gamer {
+            color: #00f5ff;
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.6);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        /* Empty State */
+        .empty-state-gamer {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px dashed rgba(0, 245, 255, 0.3);
+            border-radius: 12px;
+            padding: 60px 20px;
+        }
+
+        .empty-state-gamer i {
+            color: rgba(0, 245, 255, 0.5);
+            font-size: 80px;
+        }
+
+        .empty-state-gamer h5 {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .empty-state-gamer p {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Footer gamer */
+        .games-page footer {
+            background: rgba(26, 26, 46, 0.95) !important;
+            box-shadow: 0 -4px 20px rgba(0, 245, 255, 0.2);
+        }
+
+        .games-page footer .footer-copyright {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+    </style>
+</head>
+<body class="games-page">
+
+<!-- Navbar -->
+<nav>
+    <div class="nav-wrapper container">
+        <a href="/" class="brand-logo white-text">Mi Sitio</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/" class="white-text">Inicio</a></li>
+            <li><a href="/about" class="white-text">Acerca de</a></li>
+            <li><a href="/contact" class="white-text">Contacto</a></li>
+            <li><a href="/games" class="cyan-text text-lighten-2">Videojuegos</a></li>
+            <li><a href="/admin" class="white-text">Admin</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Header Section -->
+<div class="games-hero">
+    <div class="container center-align">
+        <h1>VIDEOJUEGOS POPULARES</h1>
+        <p class="flow-text">Gestiona tu colección de videojuegos favoritos</p>
+    </div>
+</div>
+
+<!-- Content Section -->
+<div class="container section">
+
+    <!-- Estadísticas -->
+    <div class="row">
+        <div class="col s12 m4">
+            <div class="stat-card-gamer center-align">
+                <i class="material-icons medium">videogame_asset</i>
+                <h5><%= games.length %></h5>
+                <p>Juegos registrados</p>
+            </div>
+        </div>
+        <div class="col s12 m4">
+            <div class="stat-card-gamer center-align">
+                <i class="material-icons medium">star</i>
+                <h5>
+                    <%= games.length > 0 ? (games.reduce((sum, g) => sum + g.calificacion, 0) / games.length).toFixed(1) : '0' %>
+                </h5>
+                <p>Calificación promedio</p>
+            </div>
+        </div>
+        <div class="col s12 m4">
+            <div class="stat-card-gamer center-align">
+                <i class="material-icons medium">calendar_today</i>
+                <h5>2026</h5>
+                <p>Año actual</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario para agregar videojuego -->
+    <div class="row">
+        <div class="col s12">
+            <div class="card form-card-gamer">
+                <div class="card-content">
+                    <span class="card-title">
+                        <i class="material-icons left">add_circle</i>
+                        AGREGAR NUEVO VIDEOJUEGO
+                    </span>
+
+                    <form action="/games" method="POST">
+                        <div class="row">
+                            <div class="input-field col s12 m6">
+                                <i class="material-icons prefix grey-text text-darken-2">gamepad</i>
+                                <input id="nombre" type="text" name="nombre" required>
+                                <label for="nombre">Nombre del juego</label>
+                            </div>
+
+                            <div class="input-field col s12 m6">
+                                <i class="material-icons prefix grey-text text-darken-2">category</i>
+                                <input id="genero" type="text" name="genero" required>
+                                <label for="genero">Género</label>
+                                <span class="helper-text">Ej: Aventura, Acción, RPG, Deportes</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12 m4">
+                                <i class="material-icons prefix grey-text text-darken-2">event</i>
+                                <input id="anio" type="number" name="anio" min="1970" max="2030" required>
+                                <label for="anio">Año de lanzamiento</label>
+                            </div>
+
+                            <div class="input-field col s12 m4">
+                                <i class="material-icons prefix grey-text text-darken-2">devices</i>
+                                <input id="plataforma" type="text" name="plataforma" required>
+                                <label for="plataforma">Plataforma</label>
+                                <span class="helper-text">Ej: PS5, Xbox, PC, Switch</span>
+                            </div>
+
+                            <div class="input-field col s12 m4">
+                                <i class="material-icons prefix grey-text text-darken-2">star_rate</i>
+                                <input id="calificacion" type="number" name="calificacion" min="1" max="10" step="0.1" required>
+                                <label for="calificacion">Calificación (1-10)</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix grey-text text-darken-2">image</i>
+                                <input id="imagen" type="url" name="imagen" placeholder="https://ejemplo.com/imagen.jpg">
+                                <label for="imagen">URL de imagen (opcional)</label>
+                                <span class="helper-text">Ingresa la URL de una imagen del juego</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix grey-text text-darken-2">description</i>
+                                <textarea id="descripcion" class="materialize-textarea" name="descripcion" required></textarea>
+                                <label for="descripcion">Descripción</label>
+                            </div>
+                        </div>
+
+                        <div class="center-align">
+                            <button type="submit" class="btn-large btn-gamer waves-effect waves-light">
+                                <i class="material-icons left">save</i>
+                                GUARDAR VIDEOJUEGO
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de videojuegos -->
+    <div class="row">
+        <div class="col s12">
+            <h5 class="section-title-gamer center-align">
+                <i class="material-icons left">library_books</i>
+                CATÁLOGO DE VIDEOJUEGOS
+            </h5>
+
+            <% if (games.length === 0) { %>
+                <div class="empty-state-gamer center-align">
+                    <i class="material-icons">games</i>
+                    <h5>NO HAY VIDEOJUEGOS REGISTRADOS</h5>
+                    <p>Agrega tu primer videojuego usando el formulario anterior</p>
+                </div>
+            <% } else { %>
+                <div class="row">
+                    <% games.forEach(game => { %>
+                        <div class="col s12 m6 l4">
+                            <div class="card game-card">
+                                <div class="card-image">
+                                    <img src="<%= game.imagen %>" alt="<%= game.nombre %>" style="height: 250px; object-fit: cover;">
+                                    <span class="card-title" style="width: 100%; padding: 10px;">
+                                        <%= game.nombre %>
+                                    </span>
+                                </div>
+                                <div class="card-content">
+                                    <p>
+                                        <strong>Género:</strong> <%= game.genero %><br>
+                                        <strong>Año:</strong> <%= game.anio %><br>
+                                        <strong>Plataforma:</strong> <%= game.plataforma %><br>
+                                        <strong>Calificación:</strong>
+                                        <span class="game-rating white-text">
+                                            <%= game.calificacion %>/10
+                                        </span>
+                                    </p>
+                                    <p style="margin-top: 10px; color: rgba(255, 255, 255, 0.7);">
+                                        <%= game.descripcion %>
+                                    </p>
+                                </div>
+                                <div class="card-action">
+                                    <form action="/games/<%= game.id %>/delete" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn-small btn-delete-gamer waves-effect waves-light"
+                                                onclick="return confirm('¿Eliminar este videojuego?')">
+                                            <i class="material-icons left">delete</i>
+                                            ELIMINAR
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="page-footer">
+    <div class="footer-copyright">
+        <div class="container center-align">
+            2026 Mi Sitio Express - Gestión de Videojuegos
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
