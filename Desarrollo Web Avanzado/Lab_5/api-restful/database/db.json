@@ -1,0 +1,95 @@
+{
+  "tickets": [
+    {
+      "id": "d0c6a0a6-0c2a-4223-9cf3-9cdeeb5162fd",
+      "title": "Pruebita 1",
+      "description": "Probando Email",
+      "status": "nuevo",
+      "priority": "medium",
+      "assignedUser": null
+    },
+    {
+      "id": "14f71b2c-5a37-4cfe-8095-22330ecaa41d",
+      "title": "Pruebita 2",
+      "description": "Probando Email",
+      "status": "nuevo",
+      "priority": "medium",
+      "assignedUser": null
+    },
+    {
+      "id": "5cf020dd-1bb9-4f08-bc2c-3cee0f92bd70",
+      "title": "Pruebita 5",
+      "description": "Probando Email",
+      "status": "nuevo",
+      "priority": "medium",
+      "assignedUser": null
+    },
+    {
+      "id": "1ada40ba-90b0-418e-afb3-021a462b9084",
+      "title": "Pruebita ocy",
+      "description": "Probando Email",
+      "status": "Asignado",
+      "priority": "medium",
+      "assignedUser": "Aldy"
+    },
+    {
+      "id": "0fd9bbab-2eec-430b-baf6-865dd12c7974",
+      "title": "",
+      "description": "Ocurrió un error en el sistema",
+      "status": "nuevo",
+      "priority": "medium",
+      "assignedUser": null
+    }
+  ],
+  "notifications": [
+    {
+      "id": "4e1dab25-3bc8-4dc8-a8f6-04861cc3d17e",
+      "type": "email",
+      "message": "Nuevo ticket creado: Pruebita 1",
+      "status": "pending",
+      "ticketId": "d0c6a0a6-0c2a-4223-9cf3-9cdeeb5162fd"
+    },
+    {
+      "id": "bb55889b-89eb-4c99-97fe-1c64e0027d4d",
+      "type": "email",
+      "message": "Nuevo ticket creado: Pruebita 2",
+      "status": "pending",
+      "ticketId": "14f71b2c-5a37-4cfe-8095-22330ecaa41d"
+    },
+    {
+      "id": "fa5e3aa2-8953-4887-805e-6c9eef6f4901",
+      "type": "email",
+      "message": "Nuevo ticket creado: Pruebita 5",
+      "status": "pending",
+      "ticketId": "5cf020dd-1bb9-4f08-bc2c-3cee0f92bd70"
+    },
+    {
+      "id": "0c6b7045-f315-44f4-8bfd-6ea13658199f",
+      "type": "email",
+      "message": "Nuevo ticket creado: Pruebita ocy",
+      "status": "pending",
+      "ticketId": "1ada40ba-90b0-418e-afb3-021a462b9084"
+    },
+    {
+      "id": "319514d9-9c80-450c-a1b0-28fb3664b687",
+      "type": "email",
+      "message": "El ticket 1ada40ba-90b0-418e-afb3-021a462b9084 fue asignado a Aldy",
+      "status": "pending",
+      "ticketId": "1ada40ba-90b0-418e-afb3-021a462b9084"
+    },
+    {
+      "id": "fb8af0ca-1bea-43d1-8e9d-4be27630cc86",
+      "type": "email",
+      "message": "El ticket 1ada40ba-90b0-418e-afb3-021a462b9084 cambió a Asignado",
+      "status": "pending",
+      "ticketId": "1ada40ba-90b0-418e-afb3-021a462b9084"
+    },
+    {
+      "id": "6bf5816d-ac3b-4193-b754-836b6fe06f38",
+      "type": "email",
+      "message": "Nuevo ticket creado: ",
+      "status": "pending",
+      "ticketId": "0fd9bbab-2eec-430b-baf6-865dd12c7974"
+    }
+  ]
+}
