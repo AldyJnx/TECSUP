@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Post - Social Media</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0d1117;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+
+    nav {
+      background-color: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 12px 0;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 600;
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .nav-links a {
+      color: #8b949e;
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #e6edf3;
+    }
+
+    .form-container {
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .form-card {
+      background-color: #1c2128;
+      border-radius: 10px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #e6edf3;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #c9d1d9;
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #e6edf3;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #58a6ff;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .helper-text {
+      font-size: 12px;
+      color: #8b949e;
+      margin-top: 6px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: #30363d;
+      color: #c9d1d9;
+      margin-top: 12px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #484f58;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    @media (max-width: 767px) {
+      .form-container {
+        padding: 0 16px;
+      }
+
+      .form-card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="brand">Social Media</a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/posts">Feed</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="form-container">
+    <div class="form-card">
+      <h1 class="form-title">Crear Nuevo Post</h1>
+
+      <form action="/posts" method="POST">
+        <div class="form-group">
+          <label for="userId">Usuario</label>
+          <select name="userId" id="userId" required>
+            <option value="" disabled selected>Selecciona un usuario</option>
+            <% users.forEach(user => { %>
+              <option value="<%= user._id %>"><%= user.name %> <%= user.lastName %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="title">Titulo del post</label>
+          <input type="text" id="title" name="title" required minlength="5" maxlength="30" placeholder="Escribe un titulo llamativo...">
+          <span class="helper-text">Entre 5 y 30 caracteres</span>
+        </div>
+
+        <div class="form-group">
+          <label for="content">Contenido</label>
+          <textarea id="content" name="content" required minlength="10" placeholder="Comparte tu experiencia..."></textarea>
+          <span class="helper-text">Minimo 10 caracteres</span>
+        </div>
+
+        <div class="form-group">
+          <label for="hashtags">Hashtags</label>
+          <input type="text" id="hashtags" name="hashtags" placeholder="gaming, rpg, adventure">
+          <span class="helper-text">Separados por comas</span>
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl">URL de imagen (opcional)</label>
+          <input type="url" id="imageUrl" name="imageUrl" placeholder="https://...">
+          <span class="helper-text">URL de una imagen para tu post</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Crear Post</button>
+        <a href="/posts" class="btn btn-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
