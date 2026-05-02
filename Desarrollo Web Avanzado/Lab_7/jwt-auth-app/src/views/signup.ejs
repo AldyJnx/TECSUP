@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="auth-shell">
+    <aside class="auth-aside">
+      <div class="auth-aside-brand">
+        <span class="brand-mark"></span>
+        <span>Auth Console</span>
+      </div>
+      <div class="auth-aside-content">
+        <h2>Crea tu cuenta en segundos.</h2>
+        <p>Registra tus datos y obten acceso al panel de usuario. La contrasena se almacena con hashing bcrypt.</p>
+      </div>
+      <div class="auth-aside-footer">TECSUP &middot; Desarrollo Web Avanzado &middot; 2026</div>
+    </aside>
+
+    <main class="auth-main">
+      <section class="auth-card">
+        <h1>Crear cuenta</h1>
+        <p class="auth-card-sub">Completa el formulario para registrarte como usuario.</p>
+
+        <div id="alert" class="alert hidden"></div>
+
+        <form id="signupForm" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="name">Nombres</label>
+              <input type="text" id="name" name="name" placeholder="Edwin" required>
+            </div>
+            <div class="field">
+              <label for="lastName">Apellidos</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Arevalo" required>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="phoneNumber">Telefono</label>
+              <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="999 888 777">
+            </div>
+            <div class="field">
+              <label for="birthdate">Fecha de nacimiento</label>
+              <input type="date" id="birthdate" name="birthdate">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Correo electronico</label>
+            <input type="email" id="email" name="email" placeholder="tu@correo.com" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="password">Contrasena</label>
+            <input type="password" id="password" name="password" placeholder="Minimo 6 caracteres" autocomplete="new-password" minlength="6" required>
+          </div>
+
+          <button type="submit" class="btn btn-block" id="submitBtn">Crear cuenta</button>
+        </form>
+
+        <div class="divider"></div>
+        <p class="muted" style="text-align:center; font-size: 0.88rem;">
+          Ya tienes cuenta? <a href="/signIn">Inicia sesion</a>
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    Auth.requireGuest();
+
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAlert('#alert');
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        phoneNumber: document.getElementById('phoneNumber').value.trim(),
+        birthdate: document.getElementById('birthdate').value || null,
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value,
+        roles: ['user']
+      };
+
+      if (!payload.name || !payload.lastName || !payload.email || !payload.password) {
+        showAlert('#alert', 'Nombre, apellido, correo y contrasena son obligatorios.');
+        return;
+      }
+      if (payload.password.length < 6) {
+        showAlert('#alert', 'La contrasena debe tener al menos 6 caracteres.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registrando...';
+
+      try {
+        await Auth.api('/api/auth/signUp', {
+          method: 'POST',
+          auth: false,
+          body: payload
+        });
+        sessionStorage.setItem('signup_success', '1');
+        window.location.replace('/signIn?registered=1');
+      } catch (err) {
+        showAlert('#alert', err.message || 'No se pudo crear la cuenta.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Crear cuenta';
+      }
+    });
+  </script>
+</body>
+</html>

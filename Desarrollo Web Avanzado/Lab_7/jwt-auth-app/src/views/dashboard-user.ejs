@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div id="nav-slot"></div>
+
+  <main class="page">
+    <header class="page-header">
+      <div>
+        <div class="muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Panel del usuario</div>
+        <h1 class="page-title" id="welcomeTitle">Bienvenido</h1>
+        <p class="page-subtitle">Resumen de tu cuenta y accesos rapidos.</p>
+      </div>
+      <div class="gap-sm">
+        <a href="/profile" class="btn btn-secondary">Editar mi cuenta</a>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">Nombre completo</div>
+        <div class="stat-value" id="statName">-</div>
+        <div class="stat-meta" id="statEmail">-</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Roles asignados</div>
+        <div class="stat-value" id="statRoles" style="font-size: 1rem; font-weight: 500;">-</div>
+        <div class="stat-meta" id="statRolesMeta">Permisos vigentes en tu sesion.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Cuenta creada</div>
+        <div class="stat-value" id="statCreated" style="font-size: 1.1rem;">-</div>
+        <div class="stat-meta" id="statUpdated">-</div>
+      </div>
+    </section>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Resumen de la cuenta</div>
+          <div class="card-sub">Informacion personal sincronizada con la API.</div>
+        </div>
+      </div>
+      <div class="detail-grid" id="detailGrid">
+        <div class="empty">Cargando informacion...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Accesos disponibles</div>
+          <div class="card-sub">Funcionalidades segun tu rol.</div>
+        </div>
+      </div>
+      <ul style="list-style:none; padding:0; margin:0;">
+        <li style="padding: 12px 0; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:500;">Mi cuenta</div>
+            <div class="muted" style="font-size:0.85rem;">Consulta y actualiza tus datos personales.</div>
+          </div>
+          <a href="/profile" class="btn btn-ghost btn-sm">Abrir</a>
+        </li>
+        <li style="padding: 12px 0; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:500;">Cerrar sesion</div>
+            <div class="muted" style="font-size:0.85rem;">Finaliza tu sesion en este dispositivo.</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="logoutBtn">Salir</button>
+        </li>
+      </ul>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    if (Auth.requireRole('user') || Auth.hasRole('admin')) {
+      mountNav('dashboard');
+      document.getElementById('logoutBtn').addEventListener('click', () => Auth.logout());
+
+      (async function load() {
+        try {
+          const user = await Auth.api('/api/users/me');
+          Auth.setUser(user);
+
+          document.getElementById('welcomeTitle').textContent = 'Hola, ' + (user.name || '') + '.';
+          document.getElementById('statName').textContent = (user.name || '') + ' ' + (user.lastName || '');
+          document.getElementById('statEmail').textContent = user.email || '';
+          const roles = (user.roles || []).map(r => r.name || r);
+          document.getElementById('statRoles').innerHTML = roles.map(r =>
+            '<span class="badge ' + (r === 'admin' ? 'badge-admin' : 'badge-user') + '">' + r + '</span>'
+          ).join(' ');
+          document.getElementById('statCreated').textContent = fmtDate(user.createdAt);
+          document.getElementById('statUpdated').textContent = 'Actualizada: ' + fmtDate(user.updatedAt);
+
+          const grid = document.getElementById('detailGrid');
+          grid.innerHTML = `
+            <div class="detail-row"><div class="detail-key">Nombre</div><div class="detail-value">${user.name || '-'}</div></div>
+            <div class="detail-row"><div class="detail-key">Apellido</div><div class="detail-value">${user.lastName || '-'}</div></div>
+            <div class="detail-row"><div class="detail-key">Correo electronico</div><div class="detail-value">${user.email || '-'}</div></div>
+            <div class="detail-row"><div class="detail-key">Telefono</div><div class="detail-value">${user.phoneNumber || '-'}</div></div>
+            <div class="detail-row"><div class="detail-key">Fecha de nacimiento</div><div class="detail-value">${fmtDate(user.birthdate)}</div></div>
+            <div class="detail-row"><div class="detail-key">Roles</div><div class="detail-value">${roles.join(', ') || '-'}</div></div>
+          `;
+        } catch (err) {
+          document.getElementById('detailGrid').innerHTML =
+            '<div class="alert alert-error">' + (err.message || 'Error al cargar datos.') + '</div>';
+        }
+      })();
+    }
+  </script>
+</body>
+</html>

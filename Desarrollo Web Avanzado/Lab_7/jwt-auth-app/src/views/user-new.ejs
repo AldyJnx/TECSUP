@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div id="nav-slot"></div>
+
+  <main class="page" style="max-width: 720px;">
+    <header class="page-header">
+      <div>
+        <div class="muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Administracion</div>
+        <h1 class="page-title">Nuevo usuario</h1>
+        <p class="page-subtitle">Crea una cuenta y asigna sus roles iniciales.</p>
+      </div>
+      <div class="gap-sm">
+        <a href="/admin" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </header>
+
+    <div id="alert" class="alert hidden"></div>
+
+    <div class="card">
+      <form id="newUserForm">
+        <div class="section-title">Datos personales</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Nombres</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="field">
+            <label for="lastName">Apellidos</label>
+            <input type="text" id="lastName" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="phoneNumber">Telefono</label>
+            <input type="tel" id="phoneNumber">
+          </div>
+          <div class="field">
+            <label for="birthdate">Fecha de nacimiento</label>
+            <input type="date" id="birthdate">
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 20px;">Credenciales</div>
+        <div class="field">
+          <label for="email">Correo electronico</label>
+          <input type="email" id="email" required>
+        </div>
+        <div class="field">
+          <label for="password">Contrasena</label>
+          <input type="password" id="password" minlength="6" required>
+        </div>
+
+        <div class="section-title" style="margin-top: 20px;">Roles</div>
+        <div class="field">
+          <div class="checkbox-group">
+            <label class="checkbox">
+              <input type="checkbox" name="role" value="user" checked>
+              <span>Usuario</span>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="role" value="admin">
+              <span>Administrador</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex-between" style="margin-top: 24px;">
+          <a href="/admin" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn" id="submitBtn">Crear usuario</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    if (Auth.requireRole('admin')) {
+      mountNav('admin');
+
+      document.getElementById('newUserForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlert('#alert');
+
+        const roles = Array.from(document.querySelectorAll('input[name="role"]:checked'))
+          .map(c => c.value);
+        if (!roles.length) {
+          showAlert('#alert', 'Selecciona al menos un rol.');
+          return;
+        }
+
+        const payload = {
+          name: document.getElementById('name').value.trim(),
+          lastName: document.getElementById('lastName').value.trim(),
+          phoneNumber: document.getElementById('phoneNumber').value.trim(),
+          birthdate: document.getElementById('birthdate').value || null,
+          email: document.getElementById('email').value.trim(),
+          password: document.getElementById('password').value,
+          roles
+        };
+
+        if (payload.password.length < 6) {
+          showAlert('#alert', 'La contrasena debe tener al menos 6 caracteres.');
+          return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Creando...';
+        try {
+          await Auth.api('/api/users', { method: 'POST', body: payload });
+          window.location.replace('/admin?created=1');
+        } catch (err) {
+          showAlert('#alert', err.message || 'No se pudo crear el usuario.');
+          btn.disabled = false;
+          btn.textContent = 'Crear usuario';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div id="nav-slot"></div>
+  <div class="error-shell">
+    <div class="error-card">
+      <div class="error-code">404</div>
+      <div class="error-title">Pagina no encontrada</div>
+      <p class="error-sub">La direccion que intentas visitar no existe o fue movida.</p>
+      <div class="error-actions">
+        <a href="/signIn" class="btn btn-secondary">Ir a inicio de sesion</a>
+        <a href="/dashboard" class="btn">Ir al panel</a>
+      </div>
+    </div>
+  </div>
+  <script src="/js/auth.js"></script>
+  <script>
+    if (window.Auth && Auth.isAuthenticated()) mountNav('');
+  </script>
+</body>
+</html>

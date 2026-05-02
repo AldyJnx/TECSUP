@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div class="auth-shell">
+    <aside class="auth-aside">
+      <div class="auth-aside-brand">
+        <span class="brand-mark"></span>
+        <span>Auth Console</span>
+      </div>
+      <div class="auth-aside-content">
+        <h2>Acceso seguro a tu plataforma.</h2>
+        <p>Autenticacion basada en JSON Web Tokens, control de roles y gestion de usuarios desde una interfaz limpia y enfocada.</p>
+      </div>
+      <div class="auth-aside-footer">TECSUP &middot; Desarrollo Web Avanzado &middot; 2026</div>
+    </aside>
+
+    <main class="auth-main">
+      <section class="auth-card">
+        <h1>Bienvenido de vuelta</h1>
+        <p class="auth-card-sub">Inicia sesion con tus credenciales para continuar.</p>
+
+        <div id="alert" class="alert hidden"></div>
+
+        <form id="signinForm" novalidate>
+          <div class="field">
+            <label for="email">Correo electronico</label>
+            <input type="email" id="email" name="email" placeholder="tu@correo.com" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="password">Contrasena</label>
+            <input type="password" id="password" name="password" placeholder="Tu contrasena" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn btn-block" id="submitBtn">Iniciar sesion</button>
+        </form>
+
+        <div class="divider"></div>
+        <p class="muted" style="text-align:center; font-size: 0.88rem;">
+          Aun no tienes cuenta? <a href="/signUp">Crea una</a>
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    Auth.requireGuest();
+
+    const form = document.getElementById('signinForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAlert('#alert');
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) {
+        showAlert('#alert', 'Completa todos los campos.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verificando...';
+
+      try {
+        const data = await Auth.api('/api/auth/signIn', {
+          method: 'POST',
+          auth: false,
+          body: { email, password }
+        });
+        Auth.setSession(data.token, data.user, data.roles);
+        const target = (data.roles || []).includes('admin') ? '/admin' : '/dashboard';
+        window.location.replace(target);
+      } catch (err) {
+        showAlert('#alert', err.message || 'No se pudo iniciar sesion.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Iniciar sesion';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div id="nav-slot"></div>
+
+  <main class="page">
+    <header class="page-header">
+      <div>
+        <div class="muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Administracion</div>
+        <h1 class="page-title">Gestion de usuarios</h1>
+        <p class="page-subtitle">Lista y revisa todos los usuarios registrados en la plataforma.</p>
+      </div>
+      <div class="gap-sm">
+        <a href="/profile" class="btn btn-secondary">Mi cuenta</a>
+        <a href="/admin/users/new" class="btn">Nuevo usuario</a>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">Total de usuarios</div>
+        <div class="stat-value" id="statTotal">-</div>
+        <div class="stat-meta">Cuentas registradas en la base de datos.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Administradores</div>
+        <div class="stat-value" id="statAdmins">-</div>
+        <div class="stat-meta">Usuarios con privilegios elevados.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Nuevos esta semana</div>
+        <div class="stat-value" id="statNew">-</div>
+        <div class="stat-meta">Registros en los ultimos 7 dias.</div>
+      </div>
+    </section>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div class="toolbar" style="padding: 18px 22px; margin: 0; border-bottom: 1px solid var(--border);">
+        <div class="toolbar-left">
+          <div>
+            <div class="card-title">Usuarios</div>
+            <div class="card-sub" id="usersCount">Cargando...</div>
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <div class="search">
+            <input type="search" id="searchInput" placeholder="Buscar por nombre o correo">
+          </div>
+        </div>
+      </div>
+
+      <div id="alert" class="alert hidden" style="margin: 16px 22px;"></div>
+
+      <div class="table-wrap" style="border:none; border-radius:0;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Telefono</th>
+              <th>Roles</th>
+              <th>Registro</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody">
+            <tr><td colspan="5"><div class="empty">Cargando usuarios...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div id="confirmModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-title">Eliminar usuario</div>
+      <p class="modal-sub" id="confirmText">Esta accion no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelDelete">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDelete">Si, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    if (Auth.requireRole('admin')) {
+      mountNav('admin');
+
+      let allUsers = [];
+      let pendingDeleteId = null;
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('deleted') === '1') {
+        showAlert('#alert', 'Usuario eliminado correctamente.', 'success');
+        history.replaceState(null, '', '/admin');
+      }
+      if (params.get('created') === '1') {
+        showAlert('#alert', 'Usuario creado correctamente.', 'success');
+        history.replaceState(null, '', '/admin');
+      }
+
+      const modal = document.getElementById('confirmModal');
+      function openDeleteModal(id, name) {
+        pendingDeleteId = id;
+        document.getElementById('confirmText').textContent =
+          'Vas a eliminar a "' + (name || '').trim() + '". Esta accion no se puede deshacer.';
+        modal.classList.remove('hidden');
+      }
+      function closeDeleteModal() {
+        pendingDeleteId = null;
+        modal.classList.add('hidden');
+      }
+      document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeDeleteModal(); });
+      document.getElementById('confirmDelete').addEventListener('click', async () => {
+        if (!pendingDeleteId) return closeDeleteModal();
+        const id = pendingDeleteId;
+        try {
+          await Auth.api('/api/users/' + id, { method: 'DELETE' });
+          allUsers = allUsers.filter(u => u._id !== id);
+          render(allUsers);
+          updateStats(allUsers);
+          document.getElementById('usersCount').textContent = `${allUsers.length} usuarios registrados`;
+          closeDeleteModal();
+          showAlert('#alert', 'Usuario eliminado correctamente.', 'success');
+        } catch (err) {
+          closeDeleteModal();
+          showAlert('#alert', err.message || 'No se pudo eliminar el usuario.');
+        }
+      });
+
+      function updateStats(users) {
+        document.getElementById('statTotal').textContent = users.length;
+        document.getElementById('statAdmins').textContent =
+          users.filter(u => (u.roles || []).some(r => (r.name || r) === 'admin')).length;
+        const week = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        document.getElementById('statNew').textContent =
+          users.filter(u => new Date(u.createdAt).getTime() >= week).length;
+      }
+
+      function render(list) {
+        const tbody = document.getElementById('usersBody');
+        if (!list.length) {
+          tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-title">Sin resultados</div>No se encontraron usuarios.</div></td></tr>';
+          return;
+        }
+        tbody.innerHTML = list.map(u => {
+          const roles = (u.roles || []).map(r => r.name || r);
+          const badges = roles.map(r =>
+            '<span class="badge ' + (r === 'admin' ? 'badge-admin' : 'badge-user') + '">' + r + '</span>'
+          ).join(' ');
+          const ini = ((u.name || '?').charAt(0) + (u.lastName || '').charAt(0)).toUpperCase();
+          return `
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">${ini}</div>
+                  <div>
+                    <div class="user-cell-name">${(u.name || '') + ' ' + (u.lastName || '')}</div>
+                    <div class="user-cell-email">${u.email || ''}</div>
+                  </div>
+                </div>
+              </td>
+              <td>${u.phoneNumber || '-'}</td>
+              <td><div class="badge-list">${badges || '-'}</div></td>
+              <td>${fmtDate(u.createdAt)}</td>
+              <td class="text-right">
+                <div class="row-actions" style="justify-content:flex-end;">
+                  <a href="/admin/users/${u._id}" class="btn btn-ghost btn-sm">Editar</a>
+                  <button type="button" class="btn btn-danger btn-sm" data-delete="${u._id}" data-name="${(u.name || '') + ' ' + (u.lastName || '')}">Eliminar</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+          btn.addEventListener('click', () => openDeleteModal(btn.dataset.delete, btn.dataset.name));
+        });
+      }
+
+      function applyFilter(q) {
+        if (!q) return render(allUsers);
+        const term = q.toLowerCase();
+        const filtered = allUsers.filter(u => {
+          const full = (u.name + ' ' + u.lastName + ' ' + u.email).toLowerCase();
+          return full.includes(term);
+        });
+        render(filtered);
+        document.getElementById('usersCount').textContent =
+          `${filtered.length} de ${allUsers.length} usuarios`;
+      }
+
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        applyFilter(e.target.value.trim());
+      });
+
+      (async function load() {
+        try {
+          const users = await Auth.api('/api/users');
+          allUsers = users;
+          updateStats(users);
+          document.getElementById('usersCount').textContent = `${users.length} usuarios registrados`;
+          render(users);
+        } catch (err) {
+          showAlert('#alert', err.message || 'Error al cargar usuarios.');
+          document.getElementById('usersBody').innerHTML = '';
+        }
+      })();
+    }
+  </script>
+</body>
+</html>

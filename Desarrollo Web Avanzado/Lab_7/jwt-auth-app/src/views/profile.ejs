@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body>
+  <div id="nav-slot"></div>
+
+  <main class="page" style="max-width: 880px;">
+    <header class="page-header">
+      <div>
+        <div class="muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Mi cuenta</div>
+        <h1 class="page-title">Datos personales</h1>
+        <p class="page-subtitle">Consulta y actualiza la informacion asociada a tu cuenta.</p>
+      </div>
+    </header>
+
+    <div id="alert" class="alert hidden"></div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="gap-sm" style="gap: 14px;">
+          <div class="avatar" id="avatar" style="width:46px;height:46px;font-size:0.95rem;">--</div>
+          <div>
+            <div class="card-title" id="fullName">Cargando...</div>
+            <div class="card-sub" id="emailSub">-</div>
+          </div>
+        </div>
+        <div class="gap-sm">
+          <span id="rolesBadges"></span>
+        </div>
+      </div>
+
+      <div class="section-title">Informacion</div>
+      <form id="profileForm">
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Nombres</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="field">
+            <label for="lastName">Apellidos</label>
+            <input type="text" id="lastName" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="phoneNumber">Telefono</label>
+            <input type="tel" id="phoneNumber">
+          </div>
+          <div class="field">
+            <label for="birthdate">Fecha de nacimiento</label>
+            <input type="date" id="birthdate">
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Correo electronico</label>
+          <input type="email" id="email" required>
+        </div>
+
+        <div class="section-title" style="margin-top: 24px;">Seguridad</div>
+        <div class="field">
+          <label for="password">Nueva contrasena <span class="muted" style="font-weight:400; font-size:0.78rem;">(opcional)</span></label>
+          <input type="password" id="password" placeholder="Dejar en blanco para mantener la actual" minlength="6">
+        </div>
+
+        <div class="flex-between" style="margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" id="resetBtn">Descartar cambios</button>
+          <button type="submit" class="btn" id="saveBtn">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Detalles de cuenta</div>
+          <div class="card-sub">Informacion del registro.</div>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-row"><div class="detail-key">Identificador</div><div class="detail-value" id="metaId" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:0.85rem;">-</div></div>
+        <div class="detail-row"><div class="detail-key">Cuenta creada</div><div class="detail-value" id="metaCreated">-</div></div>
+        <div class="detail-row"><div class="detail-key">Ultima actualizacion</div><div class="detail-value" id="metaUpdated">-</div></div>
+        <div class="detail-row"><div class="detail-key">Estado</div><div class="detail-value" id="metaActive">-</div></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    if (Auth.requireAuth()) {
+      mountNav('profile');
+
+      let original = null;
+
+      function fillForm(user) {
+        document.getElementById('name').value = user.name || '';
+        document.getElementById('lastName').value = user.lastName || '';
+        document.getElementById('phoneNumber').value = user.phoneNumber || '';
+        document.getElementById('birthdate').value = toInputDate(user.birthdate);
+        document.getElementById('email').value = user.email || '';
+        document.getElementById('password').value = '';
+      }
+
+      function fillSummary(user) {
+        const ini = ((user.name || '?').charAt(0) + (user.lastName || '').charAt(0)).toUpperCase();
+        document.getElementById('avatar').textContent = ini || '--';
+        document.getElementById('fullName').textContent = (user.name || '') + ' ' + (user.lastName || '');
+        document.getElementById('emailSub').textContent = user.email || '';
+
+        const roles = (user.roles || []).map(r => r.name || r);
+        document.getElementById('rolesBadges').innerHTML = roles.map(r =>
+          '<span class="badge ' + (r === 'admin' ? 'badge-admin' : 'badge-user') + '">' + r + '</span>'
+        ).join(' ');
+
+        document.getElementById('metaId').textContent = user._id || '-';
+        document.getElementById('metaCreated').textContent = fmtDateTime(user.createdAt);
+        document.getElementById('metaUpdated').textContent = fmtDateTime(user.updatedAt);
+        document.getElementById('metaActive').innerHTML = user.active === false
+          ? '<span class="badge" style="color: var(--danger); border-color:#fecaca; background: var(--danger-bg);">Inactiva</span>'
+          : '<span class="badge" style="color: var(--success); border-color:#bbf7d0; background: var(--success-bg);">Activa</span>';
+      }
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        if (original) fillForm(original);
+        clearAlert('#alert');
+      });
+
+      document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlert('#alert');
+
+        const payload = {
+          name: document.getElementById('name').value.trim(),
+          lastName: document.getElementById('lastName').value.trim(),
+          phoneNumber: document.getElementById('phoneNumber').value.trim(),
+          birthdate: document.getElementById('birthdate').value || null,
+          email: document.getElementById('email').value.trim()
+        };
+        const pwd = document.getElementById('password').value;
+        if (pwd) {
+          if (pwd.length < 6) {
+            showAlert('#alert', 'La contrasena debe tener al menos 6 caracteres.');
+            return;
+          }
+          payload.password = pwd;
+        }
+
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+        try {
+          const updated = await Auth.api('/api/users/me', {
+            method: 'PUT',
+            body: payload
+          });
+          original = updated;
+          Auth.setUser(updated);
+          fillSummary(updated);
+          fillForm(updated);
+          showAlert('#alert', 'Datos actualizados correctamente.', 'success');
+        } catch (err) {
+          showAlert('#alert', err.message || 'No se pudo actualizar la cuenta.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Guardar cambios';
+        }
+      });
+
+      (async function load() {
+        try {
+          const me = await Auth.api('/api/users/me');
+          original = me;
+          Auth.setUser(me);
+          fillSummary(me);
+          fillForm(me);
+        } catch (err) {
+          showAlert('#alert', err.message || 'No se pudo cargar tu cuenta.');
+        }
+      })();
+    }
+  </script>
+</body>
+</html>
