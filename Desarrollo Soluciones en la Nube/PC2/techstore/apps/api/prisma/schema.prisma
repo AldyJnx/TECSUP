@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoleEnum {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+  AUDITOR
+}
+
+model Store {
+  id        String    @id @default(cuid())
+  name      String    @db.VarChar(150)
+  address   String    @db.VarChar(300)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  users    User[]
+  products Product[]
+
+  @@map("stores")
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique @db.VarChar(255)
+  passwordHash        String    @db.VarChar(255)
+  fullName            String    @db.VarChar(200)
+  storeId             String?
+  mfaEnabled          Boolean   @default(false)
+  mfaSecret           String?   @db.VarChar(255)
+  isActive            Boolean   @default(true)
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
+
+  store         Store?         @relation(fields: [storeId], references: [id])
+  userRoles     UserRole[]     @relation("UserRoles")
+  assignedRoles UserRole[]     @relation("AssignedByRoles")
+  products      Product[]
+  mfaCodes      MfaCode[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@index([email])
+  @@index([storeId])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        RoleEnum @unique
+  description String   @db.VarChar(300)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userRoles UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id           String   @id @default(cuid())
+  userId       String
+  roleId       String
+  assignedById String
+  assignedAt   DateTime @default(now())
+
+  user       User @relation("UserRoles", fields: [userId], references: [id])
+  role       Role @relation(fields: [roleId], references: [id])
+  assignedBy User @relation("AssignedByRoles", fields: [assignedById], references: [id])
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String    @db.VarChar(200)
+  description String?   @db.Text
+  price       Decimal   @db.Decimal(10, 2)
+  stock       Int       @default(0)
+  category    String    @db.VarChar(100)
+  storeId     String
+  isPremium   Boolean   @default(false)
+  createdById String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  store     Store @relation(fields: [storeId], references: [id])
+  createdBy User  @relation(fields: [createdById], references: [id])
+
+  @@index([storeId])
+  @@index([storeId, isPremium])
+  @@map("products")
+}
+
+model MfaCode {
+  id        String   @id @default(cuid())
+  userId    String
+  codeHash  String   @db.VarChar(255)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  attempts  Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("mfa_codes")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String   @db.VarChar(100)
+  resource   String   @db.VarChar(100)
+  resourceId String?  @db.VarChar(100)
+  metadata   Json?
+  ipAddress  String?  @db.VarChar(50)
+  userAgent  String?  @db.VarChar(500)
+  success    Boolean  @default(true)
+  timestamp  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([resource, resourceId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique @db.VarChar(255)
+  expiresAt  DateTime
+  revoked    Boolean  @default(false)
+  deviceInfo String?  @db.VarChar(500)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}

@@ -1,0 +1,287 @@
+### TechStore API — colección REST Client (VS Code)
+### Setup: instala "REST Client" (humao.rest-client) y haz click en "Send Request"
+
+@baseUrl = http://localhost:3001
+@admin = admin@techstore.com
+@manager = manager.lima@techstore.com
+@employee = employee.lima@techstore.com
+@auditor = auditor@techstore.com
+@password = Password!123
+
+############################
+# 0. Health
+############################
+GET {{baseUrl}}/health
+
+############################
+# 1. AUTH
+############################
+
+### 1.1 Register (rol EMPLOYEE por defecto)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo.user@techstore.com",
+  "password": "StrongP@ss1",
+  "fullName": "Demo User",
+  "storeId": "store-lima"
+}
+
+### 1.2 Login ADMIN
+# @name loginAdmin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{admin}}",
+  "password": "{{password}}"
+}
+
+### 1.3 Login MANAGER (Lima)
+# @name loginManager
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{manager}}",
+  "password": "{{password}}"
+}
+
+### 1.4 Login EMPLOYEE (Lima)
+# @name loginEmployee
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{employee}}",
+  "password": "{{password}}"
+}
+
+### 1.5 Login AUDITOR
+# @name loginAuditor
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{auditor}}",
+  "password": "{{password}}"
+}
+
+@adminToken = {{loginAdmin.response.body.data.tokens.accessToken}}
+@managerToken = {{loginManager.response.body.data.tokens.accessToken}}
+@employeeToken = {{loginEmployee.response.body.data.tokens.accessToken}}
+@auditorToken = {{loginAuditor.response.body.data.tokens.accessToken}}
+@adminRefresh = {{loginAdmin.response.body.data.tokens.refreshToken}}
+
+### 1.6 Profile
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminToken}}
+
+### 1.7 Habilitar MFA (TOTP) — devuelve QR
+POST {{baseUrl}}/auth/mfa/enable
+Authorization: Bearer {{adminToken}}
+
+### 1.8 Confirmar setup MFA con primer código
+POST {{baseUrl}}/auth/mfa/verify-setup
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "code": "123456"
+}
+
+### 1.9 Verificar MFA en login (uso real tras /auth/login con mfaToken)
+POST {{baseUrl}}/auth/mfa/verify
+Content-Type: application/json
+
+{
+  "mfaToken": "<token-temporal>",
+  "code": "123456"
+}
+
+### 1.10 Refresh token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{adminRefresh}}"
+}
+
+### 1.11 Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{adminRefresh}}"
+}
+
+############################
+# 2. STORES
+############################
+
+### 2.1 Listar
+GET {{baseUrl}}/stores
+Authorization: Bearer {{managerToken}}
+
+### 2.2 Crear (ADMIN)
+POST {{baseUrl}}/stores
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "TechStore Cusco",
+  "address": "Av. Sol 123, Cusco"
+}
+
+############################
+# 3. ROLES (RBAC)
+############################
+
+### 3.1 Listar roles
+GET {{baseUrl}}/roles
+Authorization: Bearer {{adminToken}}
+
+### 3.2 Empleado crea rol → debe ser 403
+POST {{baseUrl}}/roles
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "name": "ADMIN",
+  "description": "intento de escalada"
+}
+
+### 3.3 Asignar rol (ADMIN)
+POST {{baseUrl}}/roles/assign
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "userId": "<userId>",
+  "roleId": "<roleId>"
+}
+
+############################
+# 4. USERS
+############################
+
+### 4.1 Listar usuarios (ADMIN/AUDITOR)
+GET {{baseUrl}}/users
+Authorization: Bearer {{adminToken}}
+
+### 4.2 Mi perfil
+GET {{baseUrl}}/users/me/profile
+Authorization: Bearer {{employeeToken}}
+
+### 4.3 Crear usuario (ADMIN)
+POST {{baseUrl}}/users
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "email": "manager.arequipa@techstore.com",
+  "password": "StrongP@ss1",
+  "fullName": "Mariano Manager AQP",
+  "storeId": "store-arequipa"
+}
+
+############################
+# 5. PRODUCTS (ABAC)
+############################
+
+### 5.1 Listar productos (cada rol ve lo permitido)
+GET {{baseUrl}}/products?page=1&limit=20
+Authorization: Bearer {{managerToken}}
+
+### 5.2 MANAGER crea producto en SU tienda (200)
+# @name createProduct
+POST {{baseUrl}}/products
+Authorization: Bearer {{managerToken}}
+Content-Type: application/json
+
+{
+  "name": "Webcam Logitech C920",
+  "price": 320.50,
+  "stock": 15,
+  "category": "Periféricos",
+  "storeId": "store-lima",
+  "isPremium": false
+}
+
+@productId = {{createProduct.response.body.data.id}}
+
+### 5.3 EMPLOYEE intenta crear producto PREMIUM → 403
+POST {{baseUrl}}/products
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "name": "iPhone 16 Pro",
+  "price": 6500,
+  "stock": 5,
+  "category": "Smartphones",
+  "storeId": "store-lima",
+  "isPremium": true
+}
+
+### 5.4 MANAGER actualiza precio de premium de SU tienda (200)
+PATCH {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{managerToken}}
+Content-Type: application/json
+
+{
+  "price": 9999.99
+}
+
+### 5.5 MANAGER intenta cambiar categoría → 403 (whitelist)
+PATCH {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{managerToken}}
+Content-Type: application/json
+
+{
+  "category": "Otra"
+}
+
+### 5.6 EMPLOYEE intenta cambiar precio → 403 (solo stock)
+PATCH {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "price": 1
+}
+
+### 5.7 EMPLOYEE actualiza stock → 200
+PATCH {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{employeeToken}}
+Content-Type: application/json
+
+{
+  "stock": 42
+}
+
+### 5.8 EMPLOYEE intenta DELETE → 403
+DELETE {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{employeeToken}}
+
+### 5.9 MANAGER intenta DELETE premium → 403
+DELETE {{baseUrl}}/products/<premium-id>
+Authorization: Bearer {{managerToken}}
+
+### 5.10 ADMIN DELETE cualquiera → 200
+DELETE {{baseUrl}}/products/{{productId}}
+Authorization: Bearer {{adminToken}}
+
+############################
+# 6. AUDIT
+############################
+
+### 6.1 Logs (ADMIN, AUDITOR)
+GET {{baseUrl}}/audit-logs?page=1&limit=50
+Authorization: Bearer {{auditorToken}}
+
+### 6.2 Logs filtrados por recurso
+GET {{baseUrl}}/audit-logs?resource=product
+Authorization: Bearer {{adminToken}}

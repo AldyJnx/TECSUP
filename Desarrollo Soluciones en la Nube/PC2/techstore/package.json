@@ -1,0 +1,38 @@
+{
+  "name": "techstore",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TechStore — gestión de inventario multi-tienda (NestJS + React)",
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @techstore/api --filter @techstore/web dev",
+    "dev:api": "pnpm --filter @techstore/api start:dev",
+    "dev:web": "pnpm --filter @techstore/web dev",
+    "build": "pnpm -r --filter @techstore/api --filter @techstore/web build",
+    "build:api": "pnpm --filter @techstore/api build",
+    "build:web": "pnpm --filter @techstore/web build",
+    "start:api": "pnpm --filter @techstore/api start:prod",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm -r test:e2e",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "db:migrate": "pnpm --filter @techstore/api db:migrate",
+    "db:seed": "pnpm --filter @techstore/api db:seed",
+    "db:studio": "pnpm --filter @techstore/api db:studio",
+    "db:reset": "pnpm --filter @techstore/api db:reset",
+    "gen:types": "pnpm --filter @techstore/api gen:openapi && pnpm --filter @techstore/web gen:types",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
+  }
+}
