@@ -1,6 +1,6 @@
 {
   "name": "jwt-auth-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Aplicacion fullstack con autenticacion JWT, Express, EJS y MongoDB",
   "main": "src/server.js",
   "scripts": {
