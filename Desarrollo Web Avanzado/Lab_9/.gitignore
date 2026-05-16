@@ -1,0 +1,27 @@
+# Claude Code / AI tooling
+.claude/
+.claude-plugin/
+CLAUDE.md
+.cursor/
+.windsurf/
+.factory/
+.continue/
+.kilocode/
+.kiro/
+.roo/
+.roocode/
+.codex/
+.qoder/
+.augment/
+.warp/
+.codebuddy/
+.opencode/
+.gemini/
+.trae/
+.antigravity/
+
+# UI/UX skill (referencia local, no se versiona)
+Skills/
+
+# Vercel
+.vercel
