@@ -1,0 +1,56 @@
+// Tipos compartidos para el frontend
+
+export interface Author {
+  id: string
+  name: string
+  email: string
+  bio: string | null
+  nationality: string | null
+  birthYear: number | null
+  photoUrl: string | null
+  createdAt: string
+  updatedAt: string
+  books?: Book[]
+  _count?: { books: number }
+}
+
+export interface Book {
+  id: string
+  title: string
+  description: string | null
+  isbn: string | null
+  publishedYear: number | null
+  genre: string | null
+  pages: number | null
+  coverUrl: string | null
+  authorId: string
+  createdAt: string
+  updatedAt: string
+  author?: Pick<Author, 'id' | 'name' | 'email'>
+}
+
+export interface Pagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+}
+
+export interface SearchResponse {
+  data: Book[]
+  pagination: Pagination
+}
+
+export interface AuthorStats {
+  authorId: string
+  authorName: string
+  totalBooks: number
+  firstBook: { title: string; year: number | null } | null
+  latestBook: { title: string; year: number | null } | null
+  averagePages: number
+  genres: string[]
+  longestBook: { title: string; pages: number | null } | null
+  shortestBook: { title: string; pages: number | null } | null
+}
