@@ -1,0 +1,8 @@
+# Herramientas de IA / agentes (no versionar)
+.claude/
+.mcp.json
+CLAUDE.md
+AGENTS.md
+
+# logs
+*.log
