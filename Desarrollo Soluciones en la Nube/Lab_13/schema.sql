@@ -1,0 +1,15 @@
+CREATE DATABASE IF NOT EXISTS agenda
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE agenda;
+
+CREATE TABLE IF NOT EXISTS contactos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  correo VARCHAR(150) NOT NULL,
+  fecha_nac DATE,
+  foto_url VARCHAR(500),
+  foto_public_id VARCHAR(200),
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

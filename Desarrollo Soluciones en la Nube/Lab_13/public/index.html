@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda de Contactos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Fondo aurora animado -->
+  <div class="aurora">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <main class="container">
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <h1>Agenda</h1>
+          <p class="subtitle">Contactos en la nube</p>
+        </div>
+      </div>
+      <button id="btn-nuevo" class="btn btn-primary">
+        <span class="plus">+</span> Nuevo contacto
+      </button>
+    </header>
+
+    <section class="toolbar glass">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18">
+          <path fill="currentColor" d="M21 20l-5.6-5.6a7 7 0 1 0-1 1L20 21zM5 10a5 5 0 1 1 10 0 5 5 0 0 1-10 0z"/>
+        </svg>
+        <input id="buscar" type="text" placeholder="Buscar por apellido..." />
+        <button id="btn-limpiar" class="btn-ghost" title="Limpiar">&times;</button>
+      </div>
+      <span id="contador" class="contador">0 contactos</span>
+    </section>
+
+    <section id="lista" class="grid"></section>
+  </main>
+
+  <!-- Modal formulario -->
+  <div id="modal" class="modal-overlay" hidden>
+    <div class="modal glass">
+      <div class="modal-head">
+        <h2 id="modal-title">Nuevo contacto</h2>
+        <button id="btn-cerrar" class="btn-ghost">&times;</button>
+      </div>
+      <form id="form" class="form">
+        <input type="hidden" id="contacto-id" />
+
+        <div class="foto-picker">
+          <div class="avatar-preview" id="avatar-preview">
+            <span id="avatar-letra">?</span>
+            <img id="avatar-img" alt="" hidden />
+          </div>
+          <label class="btn btn-soft" for="foto">
+            Subir foto
+            <input type="file" id="foto" accept="image/*" hidden />
+          </label>
+        </div>
+
+        <div class="field">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" required />
+        </div>
+        <div class="field">
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" required />
+        </div>
+        <div class="field">
+          <label for="correo">Correo</label>
+          <input type="email" id="correo" required />
+        </div>
+        <div class="field">
+          <label for="fecha_nac">Fecha de nacimiento</label>
+          <input type="date" id="fecha_nac" />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="btn-cancelar" class="btn btn-soft">Cancelar</button>
+          <button type="submit" id="btn-guardar" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
