@@ -1,0 +1,199 @@
+@use "mixins" as *;
+
+.gallery {
+  height: 100svh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(5rem, 10vw, 7rem) var(--gutter) 0;
+  color: var(--muted);
+}
+
+.kicker {
+  font-weight: 400;
+}
+
+.counter {
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+}
+
+.track {
+  flex: 1;
+  position: relative;
+  perspective: 1600px;
+  cursor: grab;
+  touch-action: pan-y;
+  outline: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(15rem, 42vw, 26rem);
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  user-select: none;
+}
+
+.cardLink {
+  display: block;
+}
+
+.cardImg {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-soft);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.8);
+
+  img {
+    object-fit: cover;
+  }
+}
+
+.cardMeta {
+  padding-top: 1.1rem;
+}
+
+.cardNum {
+  color: var(--accent-2);
+}
+
+.cardTitle {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0.3rem 0 0.6rem;
+}
+
+.cardRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 0.7rem;
+
+  span:last-child {
+    text-align: right;
+    opacity: 0.8;
+    font-size: 0.66rem;
+  }
+}
+
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+  color: var(--fg);
+  transition: gap 0.3s var(--ease);
+
+  &:hover {
+    gap: 0.7rem;
+  }
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--gutter) clamp(2rem, 5vw, 3.5rem);
+  gap: 1rem;
+}
+
+.hint {
+  color: var(--muted-2);
+  letter-spacing: 0.2em;
+}
+
+.dots {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.dot {
+  width: 26px;
+  height: 3px;
+  background: var(--line);
+  transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.dotActive {
+  background: var(--accent-grad);
+  transform: scaleY(1.6);
+}
+
+/* ---------- Reduced-motion fallback ---------- */
+.fallback {
+  padding: clamp(7rem, 14vw, 11rem) var(--gutter) 5rem;
+  max-width: var(--container);
+  margin: 0 auto;
+}
+
+.fbTitle {
+  font-size: fluid(3rem, 8rem);
+  margin-bottom: 3rem;
+}
+
+.fbGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+
+  @include until($bp-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include until($bp-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fbCard {
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+}
+
+.fbInfo {
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: var(--muted);
+
+  h2 {
+    color: var(--fg);
+    font-size: 1.8rem;
+  }
+}

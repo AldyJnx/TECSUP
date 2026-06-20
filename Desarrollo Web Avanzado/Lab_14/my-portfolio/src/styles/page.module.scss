@@ -1,0 +1,39 @@
+@use "mixins" as *;
+
+.page {
+  min-height: 100svh;
+  padding: clamp(7rem, 14vw, 11rem) var(--gutter) 0;
+  max-width: var(--container);
+  margin: 0 auto;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding-bottom: clamp(3rem, 8vw, 6rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.eyebrow {
+  color: var(--muted);
+}
+
+.title {
+  font-size: fluid(3rem, 10rem);
+  line-height: 0.9;
+}
+
+.lead {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  margin-top: 1rem;
+}
+
+.bar {
+  height: 4px;
+  width: 100%;
+  background: var(--accent-grad);
+  margin: 2rem 0;
+}

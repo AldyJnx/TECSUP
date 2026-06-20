@@ -1,0 +1,105 @@
+@use "mixins" as *;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(2rem, 6vw, 4rem) 0 6rem;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 5rem);
+  padding: clamp(2.5rem, 7vw, 5.5rem) 0;
+  border-top: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  // Alternate: image moves to the left on even rows
+  &:nth-child(even) {
+    .text {
+      order: 2;
+    }
+    .media {
+      order: 1;
+    }
+    .img {
+      mask-image: linear-gradient(to right, #000 32%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, #000 32%, transparent 100%);
+    }
+  }
+
+  @include until($bp-md) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    .text,
+    .media {
+      order: 0 !important;
+    }
+  }
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 46ch;
+}
+
+.code {
+  color: var(--accent-2);
+}
+
+.title {
+  font-size: fluid(2rem, 4rem);
+}
+
+.desc {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.tech {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-top: 1.4rem;
+}
+
+.techIcon {
+  color: var(--muted-2);
+  transition: color 0.3s var(--ease), transform 0.3s var(--ease);
+
+  &:hover {
+    color: var(--fg);
+    transform: translateY(-3px);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.img {
+  object-fit: cover;
+  opacity: 0.9;
+  // Desvanecido: la imagen se funde con el fondo hacia el texto
+  mask-image: linear-gradient(to left, #000 32%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, #000 32%, transparent 100%);
+
+  @include until($bp-md) {
+    mask-image: linear-gradient(to top, #000 30%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to top, #000 30%, transparent 100%) !important;
+  }
+}

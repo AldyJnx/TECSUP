@@ -1,0 +1,33 @@
+// Breakpoints (mobile-first)
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
+@mixin from($bp) {
+  @media (min-width: $bp) {
+    @content;
+  }
+}
+
+@mixin until($bp) {
+  @media (max-width: ($bp - 1px)) {
+    @content;
+  }
+}
+
+// Fluid type helper: clamp between min and max across the viewport
+@function fluid($min, $max, $vwMin: 22.5rem, $vwMax: 90rem) {
+  $slope: calc(($max - $min) / ($vwMax - $vwMin));
+  @return clamp(
+    #{$min},
+    calc(#{$min} + (#{$max} - #{$min}) * ((100vw - #{$vwMin}) / (#{$vwMax} - #{$vwMin}))),
+    #{$max}
+  );
+}
+
+@mixin reduce-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}

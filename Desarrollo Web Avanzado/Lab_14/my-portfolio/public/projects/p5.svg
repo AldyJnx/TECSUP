@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a1030"/>
+      <stop offset="0.55" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#2a1030"/>
+    </linearGradient>
+    <radialGradient id="r" cx="0.72" cy="0.22" r="0.9">
+      <stop offset="0" stop-color="#ff7a2f" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ff7a2f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="1500" fill="url(#g)"/>
+  <rect width="1200" height="1500" fill="url(#r)"/>
+  <g fill="#f4f4f5" font-family="Arial, Helvetica, sans-serif">
+    <text x="80" y="160" font-size="34" letter-spacing="8" opacity="0.7">05 / 06</text>
+    <text x="76" y="800" font-size="150" font-weight="800" letter-spacing="-4">PULSE</text>
+    <text x="80" y="880" font-size="40" opacity="0.7" letter-spacing="2">2024</text>
+  </g>
+</svg>
