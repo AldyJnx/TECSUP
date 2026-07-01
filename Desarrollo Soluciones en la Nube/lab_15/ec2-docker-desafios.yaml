@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: EC2 con Docker - version con desafios (Tags, KeyPair y app personalizada)
+
+Parameters:
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Nombre del Key Pair existente para acceso SSH
+
+Resources:
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Permitir acceso HTTP y SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref WebSecurityGroup
+      Tags:
+        - Key: Name
+          Value: Laboratorio-Docker
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          dnf update -y
+          dnf install -y docker
+          systemctl start docker
+          systemctl enable docker
+          docker run -d -p 80:80 nginxdemos/hello
+
+Outputs:
+
+  InstanceId:
+    Description: ID de la instancia EC2
+    Value: !Ref WebServer
+
+  PublicIP:
+    Description: IP Publica
+    Value: !GetAtt WebServer.PublicIp
+
+  URL:
+    Description: URL de la aplicacion
+    Value: !Sub 'http://${WebServer.PublicIp}'

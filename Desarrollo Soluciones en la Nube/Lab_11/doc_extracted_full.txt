@@ -1,0 +1,35 @@
+11
+“Virtualización”
+Jaime Farfán
+Desarrollo de Soluciones en la Nube.
+5 - C24 Sección ABCD
+DISEÑAR UN ENTORNO.
+Capacidades.
+Identificar los tipos de virtualización en AWS.
+Seguridad.
+En este laboratorio está prohibida la manipulación del hardware, conexiones eléctricas o de red. Así como la ingesta de alimentos y bebidas.
+Ubicar maletines y/o mochilas en lugar destinado para tal fin.
+Dejar la mesa de trabajo y la silla utilizada limpias y ordenadas.
+Fundamento teórico.
+Revise el material de la semana correspondiente antes del desarrollo del laboratorio.
+Normas empleadas.
+No aplica
+Recursos
+En este laboratorio, cada estudiante trabajará con una computadora con Windows 10.
+La instalación del software requerido se realizará en el equipo virtual.
+Computadora personal.
+Leer las diapositivas del tema.
+Leer la nomenclatura de arquitectura en AWS
+Metodología para el desarrollo de la tarea
+El desarrollo del laboratorio es grupal
+Procedimientos
+Siga los pasos para el desarrollo de la actividad:
+INSTALAR WINDOWS
+Crear una instancia de Windows en AWS
+Conectar usando RDP
+Realizar los pasos para instalar su aplicación de contactos
+INSTALAR DEBIAN
+Realizar los pasos para instalar su aplicación de contactos
+Colocar las evidencias en cada ejercicio
+Conclusiones:
+Indicar las conclusiones a las que llegó después de los temas tratados de manera práctica en este laboratorio.
